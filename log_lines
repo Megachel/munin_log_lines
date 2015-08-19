@@ -1,0 +1,31 @@
+#!/bin/bash
+LOG_FILE=/var/log/nginx/error.log
+TMP_FILE=/tmp/munin_log_lines
+
+if [ "$1" = "autoconf" ]; then
+    if [ -a $LOG_FILE ]; then
+        echo yes
+    fi
+    exit 0
+fi
+
+if [ "$1" = "config" ]; then
+    echo 'graph_title $LOG_FILE increase lines'
+    echo 'graph_args --base 1000 -l 0'
+    echo 'graph_vlabel lines'
+    echo 'graph_scale no'
+    echo 'graph_category system'
+    echo 'lines.label load'
+    echo 'lines.info 5 minute log lines'
+    exit 0
+fi
+
+LINES=`wc -l $LOG_FILE|cut -f1 -d' '`
+if [ -a $TMP_FILE ]; then
+    OLD_LINES=`cat $TMP_FILE`
+else
+    OLD_LINES=0
+    echo -n '0' > $TMP_FILE
+fi
+echo 'lines.value '$(($LINES-$OLD_LINES))
+echo -n $LINES > $TMP_FILE
