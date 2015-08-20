@@ -27,5 +27,9 @@ else
     OLD_LINES=0
     echo -n '0' > $TMP_FILE
 fi
-echo 'lines.value '$(($LINES-$OLD_LINES))
+RESULT=$(($LINES-$OLD_LINES))
+if [ $RESULT -lt 0 ]; then
+    RESULT=0
+fi
+echo 'lines.value '$RESULT
 echo -n $LINES > $TMP_FILE
